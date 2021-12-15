@@ -11,11 +11,11 @@ object PingPong extends App {
     def increment{sum+=1}
     val pong = context.actorOf(Props[PongActor], "pong")
     override def receive: Receive = {
-      case message:String=> increment
+      case message:String=> increment                                   // On each pong increment sum
       case Message=> for{
-        _ <- 1 to 10000
+        _ <- 1 to 10000                                                // sending 10000 ping message to pong
       }yield pong ! "ping"
-      case End(s)=>println(s"sum:$s")
+      case End(s)=>println(s"sum:$s")                                 // on each End print sum
       sender ! End(sum)
     }
   }
@@ -27,9 +27,9 @@ object PingPong extends App {
     }
     def increment{sum+=1}
     override def receive: Receive = {
-      case End(sum)=>println(s"counter:$sum")
-      case message:String=>increment
-      if (sum<10000) ping !"pong"
+      case End(sum)=>println(s"counter:$sum")                    // on each end print counter variable(9999)
+      case message:String=>increment                             // on each pong increment sum variable
+      if (sum<10000) ping !"pong"                                // Send pong to ping actor if sum <10000
       else if(sum==10000) sender ! End(sum)
     }
   }
